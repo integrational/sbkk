@@ -15,11 +15,18 @@
     </parent>
 
     <properties>
+        <!-- basics -->
         <java.version>1.8</java.version>
         <kotlin.version>1.1.51</kotlin.version>
+        <kotlin.compiler.incremental>false</kotlin.compiler.incremental> <!-- is experimental -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
+        <!-- docker -->
+        <docker.registry>integrational</docker.registry>
+        <!--<docker.registry>integrational</docker.registry>-->
+        <!-- dependency versions -->
+        <dockerfile.plugin.version>1.3.6</dockerfile.plugin.version>
 
+        <!-- derived -->
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
@@ -28,6 +35,7 @@
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+
         <plugins>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -51,6 +59,68 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>${dockerfile.plugin.version}</version>
+                <configuration>
+                    <repository>${docker.registry}/${project.artifactId}</repository>
+                    <!--
+                    The following requires an entry in Maven's settings.xml with the output from
+                    aws ecr get-login -no-include-email
+                    where the id must match the value of ${docker.registry} in this pom.xml or be docker.io:
+                    For instance:
+                    <server>
+                        <id>850611750428.dkr.ecr.eu-west-1.amazonaws.com</id>
+                        <username>AWS</username>
+                        <password>e...0=</password>
+                    </server>
+                    Or for docker.io:
+                    <server>
+                        <id>docker.io</id>
+                        <username>integrational</username>
+                        <password>...</password>
+                    </server>
+                    -->
+                    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+                    <!-- missing <tag/> means tagged as latest by default -->
+                    <buildArgs>
+                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                    </buildArgs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>build-and-tag-latest</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <!-- also tag with the current artifact version, matching jar -->
+                        <id>tag-version</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>tag</goal>
+                        </goals>
+                        <configuration>
+                            <tag>${project.version}</tag>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>push</id>
+                        <!-- should be mapped to deploy phase, but since this project doesn't have any -->
+                        <!-- distribution mgmt set up, it's easier to execute push at install -->
+                        <!-- Caution: only the tag applied last (the one with the actual version) is pushed! -->
+                        <!--<phase>deploy</phase>-->
+                        <!-- TODO add distribution mgmt and change to deploy -->
+                        <phase>install</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

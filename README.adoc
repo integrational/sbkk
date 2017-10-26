@@ -1,0 +1,22 @@
+= SBKK - Spring Boot Kotlin Kubernetes
+
+Build Spring Boot app jar and Docker image (but don't push the latter):
+
+[source,shell]
+----
+mvn clean install
+----
+
+Run Docker container:
+
+[source,shell]
+----
+docker run --rm -p 8080:8080 integrational/sbkk:latest
+----
+
+Execute the app:
+
+[source,shell]
+----
+curl -i http://localhost:8080
+----
