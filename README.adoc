@@ -7,7 +7,7 @@ Build Spring Boot app jar and Docker image and push both to their respective rep
 mvn clean deploy
 ----
 
-Use the Maven `install` target to not push to these repos.
+Alternatively, use the Maven `install` target to avoid pushing the app and Docker image to their repos.
 
 Run Docker container:
 
@@ -16,7 +16,7 @@ Run Docker container:
 docker run --rm -p 8080:8080 integrational/sbkk:latest
 ----
 
-Execute the app:
+Exercise the app:
 
 [source,shell]
 ----
