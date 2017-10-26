@@ -1,5 +1,7 @@
 = SBKK - Spring Boot Kotlin Kubernetes
 
+== Usage
+
 Build Spring Boot app jar and Docker image and push both to their respective repositories (Maven repo and Docker repo, respectively):
 
 [source,shell]
@@ -21,4 +23,42 @@ Exercise the app:
 [source,shell]
 ----
 curl -i http://localhost:8080
+----
+
+== Notes
+
+Create cluster:
+
+[source,shell]
+----
+gcloud container clusters create sbkk-cluster
+gcloud container clusters upgrade sbkk-cluster
+kubectl get componentstatuses
+kubectl get nodes
+----
+
+Deploy app:
+
+[source,shell]
+----
+kubectl run sbkk --image=integrational/sbkk:1.0.0-SNAPSHOT --port=8080
+kubectl describe deployment sbkk
+kubectl expose deployment sbkk --type="LoadBalancer"
+kubectl get services
+kubectl get service sbkk
+----
+
+Exercise app:
+
+[source,shell]
+----
+curl 35.189.114.192:8080
+----
+
+Cleanup:
+
+[source,shell]
+----
+kubectl delete service sbkk
+gcloud container clusters delete sbkk-cluster
 ----
