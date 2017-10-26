@@ -110,12 +110,8 @@
                     </execution>
                     <execution>
                         <id>push</id>
-                        <!-- should be mapped to deploy phase, but since this project doesn't have any -->
-                        <!-- distribution mgmt set up, it's easier to execute push at install -->
                         <!-- Caution: only the tag applied last (the one with the actual version) is pushed! -->
-                        <!--<phase>deploy</phase>-->
-                        <!-- TODO add distribution mgmt and change to deploy -->
-                        <phase>install</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>push</goal>
                         </goals>
@@ -190,4 +186,11 @@
             <url>https://repo.spring.io/libs-release</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <id>integrational-maven-repo-write</id>
+            <url>https://mymavenrepo.com/repo/B3lpCmZO9vgbr2IQZTUk/</url>
+        </repository>
+    </distributionManagement>
 </project>

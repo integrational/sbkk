@@ -1,11 +1,13 @@
 = SBKK - Spring Boot Kotlin Kubernetes
 
-Build Spring Boot app jar and Docker image (but don't push the latter):
+Build Spring Boot app jar and Docker image and push both to their respective repositories (Maven repo and Docker repo, respectively):
 
 [source,shell]
 ----
-mvn clean install
+mvn clean deploy
 ----
+
+Use the Maven `install` target to not push to these repos.
 
 Run Docker container:
 
