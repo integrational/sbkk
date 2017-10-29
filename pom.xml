@@ -21,7 +21,8 @@
         <kotlin.compiler.incremental>false</kotlin.compiler.incremental> <!-- is experimental -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- docker -->
-        <docker.registry>integrational</docker.registry>
+        <!--<docker.registry>docker.io/integrational</docker.registry>-->
+        <docker.registry>850611750428.dkr.ecr.eu-west-1.amazonaws.com</docker.registry>
         <!-- plugin versions -->
         <fabric8.plugin.version>3.5.32</fabric8.plugin.version>
         <!-- dependency versions -->
@@ -68,82 +69,51 @@
                 <configuration>
                     <verbose>true</verbose>
                     <mode>kubernetes</mode>
-                    <!-- TODO <authConfig></authConfig>-->
-                    <!-- TODO <namespace></namespace>-->
-                    <!-- TODO <pushRegistry></pushRegistry>-->
                     <images>
                         <image>
+                            <!-- e.g., docker.io/integrational/sbkk:1.0.0-SNAPSHOT -->
+                            <!-- e.g., 850611750428.dkr.ecr.eu-west-1.amazonaws.com/sbkk:1.0.0-SNAPSHOT -->
+                            <!-- requires matching entry for registry in settings.xml -->
                             <name>${docker.registry}/%a:%v</name>
                             <build>
-                                <assembly>
-                                    <name>${project.groupId}</name>
-                                    <descriptorRef>artifact</descriptorRef>
-                                </assembly>
                                 <from>openjdk:8-jdk-alpine</from>
+                                <maintainer>gerald@integrational.eu</maintainer>
                                 <tags>
-                                    <tag>latest</tag>
                                     <tag>${project.version}</tag>
+                                    <tag>latest</tag>
                                 </tags>
                                 <ports>
                                     <port>8080</port>
                                 </ports>
+                                <assembly>
+                                    <name>${project.groupId}</name>
+                                    <descriptorRef>artifact</descriptorRef>
+                                </assembly>
                                 <entryPoint>
                                     <arg>java</arg>
-                                    <arg>-Xms1024m</arg>
-                                    <arg>-Xmx1024m</arg>
+                                    <arg>-Xms512m</arg>
+                                    <arg>-Xmx512m</arg>
                                     <arg>-jar</arg>
                                     <arg>/${project.groupId}/${project.build.finalName}.jar</arg>
                                 </entryPoint>
                             </build>
                         </image>
                     </images>
-                    <!--<repository>${docker.registry}/${project.artifactId}</repository>-->
-                    <!--
-                    The following requires an entry in Maven's settings.xml with the output from
-                    aws ecr get-login -no-include-email
-                    where the id must match the value of ${docker.registry} in this pom.xml or be docker.io:
-                    For instance:
-                    <server>
-                        <id>850611750428.dkr.ecr.eu-west-1.amazonaws.com</id>
-                        <username>AWS</username>
-                        <password>e...0=</password>
-                    </server>
-                    Or for docker.io:
-                    <server>
-                        <id>docker.io</id>
-                        <username>integrational</username>
-                        <password>...</password>
-                    </server>
-                    -->
-                    <!--<useMavenSettingsForAuth>true</useMavenSettingsForAuth>-->
                 </configuration>
                 <executions>
                     <execution>
-                        <id>build-and-tag-latest</id>
+                        <id>build</id>
                         <phase>package</phase>
                         <goals>
                             <goal>build</goal>
                         </goals>
                     </execution>
-                    <!--
-                    <execution>
-                        <id>tag-version</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>tag</goal>
-                        </goals>
-                        <configuration>
-                            <tag>${project.version}</tag>
-                        </configuration>
-                    </execution>
-                    -->
                     <execution>
                         <id>push</id>
-                        <!-- Caution: only the tag applied last (the one with the actual version) is pushed! -->
                         <phase>deploy</phase>
                         <goals>
                             <goal>push</goal>
-                            <goal>deploy</goal>
+                            <!--<goal>deploy</goal>-->
                         </goals>
                     </execution>
                 </executions>
