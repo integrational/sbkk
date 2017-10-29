@@ -21,8 +21,8 @@
         <kotlin.compiler.incremental>false</kotlin.compiler.incremental> <!-- is experimental -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- docker -->
-        <!--<docker.registry>docker.io/integrational</docker.registry>-->
-        <docker.registry>850611750428.dkr.ecr.eu-west-1.amazonaws.com</docker.registry>
+        <docker.registry>docker.io/integrational</docker.registry>
+        <!--<docker.registry>850611750428.dkr.ecr.eu-west-1.amazonaws.com</docker.registry>-->
         <!-- plugin versions -->
         <fabric8.plugin.version>3.5.32</fabric8.plugin.version>
         <!-- dependency versions -->
